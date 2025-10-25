@@ -1,0 +1,18 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Buy Credits</title>
+  <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
+</head>
+<body>
+<div class="auth-card">
+  <h2>Buy Credits</h2>
+  <p>Available Credits: {{ credits }}</p>
+  <form method="POST">
+    {% csrf_token %}
+    <button type="submit">Buy 5 Credits</button>
+  </form>
+</div>
+</body>
+</html>

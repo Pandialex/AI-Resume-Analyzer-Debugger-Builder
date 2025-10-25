@@ -1,0 +1,487 @@
+{% extends "ARDAA/base.html" %}
+{% load static %}
+
+{% block title %}Analysis Results - ARDAA{% endblock %}
+
+{% block content %}
+<style>
+/* === MODERN RESULTS PAGE STYLES === */
+.results-page {
+  min-height: 100vh;
+  padding: 100px 20px 60px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  position: relative;
+}
+
+.results-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 30px;
+}
+
+/* Score Section */
+.score-section {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  padding: 40px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.score-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30px;
+  background: linear-gradient(135deg, #60a5fa, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.score-display {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 50px;
+  flex-wrap: wrap;
+}
+
+.circular-progress {
+  position: relative;
+  width: 200px;
+  height: 200px;
+}
+
+.progress-ring {
+  transform: rotate(-90deg);
+}
+
+.progress-bg {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.1);
+  stroke-width: 8;
+}
+
+.progress-fill {
+  fill: none;
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.5s ease-in-out;
+}
+
+.score-high { stroke: #10b981; }
+.score-medium { stroke: #f59e0b; }
+.score-low { stroke: #ef4444; }
+
+.score-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+}
+
+.score-value {
+  font-size: 3rem;
+  font-weight: 800;
+  display: block;
+  line-height: 1;
+}
+
+.score-label {
+  font-size: 1rem;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.score-description {
+  flex: 1;
+  max-width: 400px;
+  text-align: left;
+}
+
+.score-message {
+  font-size: 1.25rem;
+  margin-bottom: 15px;
+  color: #e2e8f0;
+}
+
+.score-details {
+  color: #94a3b8;
+  line-height: 1.6;
+}
+
+/* Analysis Sections */
+.analysis-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+}
+
+.analysis-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 30px;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.analysis-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  width: 50px;
+  height: 50px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  background: rgba(59, 130, 246, 0.1);
+  color: #3b82f6;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #f8fafc;
+  margin: 0;
+}
+
+.issue-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.issue-item {
+  background: rgba(255, 255, 255, 0.03);
+  border-left: 4px solid #3b82f6;
+  padding: 15px 20px;
+  margin-bottom: 12px;
+  border-radius: 0 8px 8px 0;
+  color: #e2e8f0;
+  line-height: 1.5;
+  transition: all 0.3s ease;
+}
+
+.issue-item:hover {
+  background: rgba(59, 130, 246, 0.1);
+  transform: translateX(5px);
+}
+
+.issue-item:last-child {
+  margin-bottom: 0;
+}
+
+.no-issues {
+  color: #94a3b8;
+  font-style: italic;
+  text-align: center;
+  padding: 20px;
+}
+
+/* Action Buttons */
+.action-section {
+  text-align: center;
+  margin-top: 40px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 15px 30px;
+  border-radius: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.3);
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #e2e8f0;
+  border-color: #475569;
+}
+
+.btn-secondary:hover {
+  border-color: #3b82f6;
+  color: #3b82f6;
+  transform: translateY(-2px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .results-page {
+    padding: 80px 15px 40px;
+  }
+  
+  .score-display {
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  .analysis-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .action-buttons {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .btn {
+    width: 100%;
+    max-width: 300px;
+    justify-content: center;
+  }
+}
+</style>
+
+<main class="results-page">
+  <div class="results-container">
+    <!-- ATS Score Section -->
+    <section class="score-section">
+      <h1 class="score-title">📊 ATS Resume Analysis</h1>
+      
+      <div class="score-display">
+        <div class="circular-progress">
+          <svg class="progress-ring" width="200" height="200">
+            <circle class="progress-bg" cx="100" cy="100" r="90"></circle>
+            <circle class="progress-fill {% if ats_score >= 80 %}score-high{% elif ats_score >= 60 %}score-medium{% else %}score-low{% endif %}" 
+                    cx="100" cy="100" r="90"
+                    stroke-dasharray="565.48"
+                    stroke-dashoffset="565.48">
+            </circle>
+          </svg>
+          <div class="score-text">
+            <span class="score-value" data-score="{{ ats_score }}">0</span>
+            <span class="score-label">ATS Score</span>
+          </div>
+        </div>
+        
+        <div class="score-description">
+          <div class="score-message">
+            {% if ats_score >= 80 %}
+              🏆 Excellent! Strong match for this role
+            {% elif ats_score >= 60 %}
+              👍 Good potential with some improvements
+            {% else %}
+              💪 Needs optimization for better results
+            {% endif %}
+          </div>
+          <div class="score-details">
+            Your resume matches <strong>{{ ats_score }}%</strong> with the job requirements. 
+            {% if ats_score >= 80 %}
+              You're well-positioned for this opportunity. Consider fine-tuning for specific keywords.
+            {% elif ats_score >= 60 %}
+              You have a solid foundation. Focus on aligning your skills more closely with the job description.
+            {% else %}
+              Significant improvements needed. Focus on keyword optimization and skill alignment.
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Analysis Results Grid -->
+    <div class="analysis-grid">
+      <!-- Grammar Issues -->
+      <section class="analysis-card">
+        <div class="card-header">
+          <div class="card-icon">📝</div>
+          <h2 class="card-title">Grammar & Style</h2>
+        </div>
+        {% if grammar %}
+          <ul class="issue-list">
+            {% for issue in grammar %}
+              <li class="issue-item">{{ issue }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="no-issues">✅ No grammar issues detected</p>
+        {% endif %}
+      </section>
+
+      <!-- Improvement Suggestions -->
+      <section class="analysis-card">
+        <div class="card-header">
+          <div class="card-icon">💡</div>
+          <h2 class="card-title">Improvement Suggestions</h2>
+        </div>
+        {% if suggestions %}
+          <ul class="issue-list">
+            {% for suggestion in suggestions %}
+              <li class="issue-item">{{ suggestion }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="no-issues">✅ No additional suggestions</p>
+        {% endif %}
+      </section>
+
+      <!-- AI Tips -->
+      <section class="analysis-card">
+        <div class="card-header">
+          <div class="card-icon">🤖</div>
+          <h2 class="card-title">AI Optimization Tips</h2>
+        </div>
+        {% if ai_tips %}
+          <ul class="issue-list">
+            {% for tip in ai_tips %}
+              <li class="issue-item">{{ tip }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="no-issues">💡 Focus on keyword optimization</p>
+        {% endif %}
+      </section>
+
+      <!-- Feedback -->
+      <section class="analysis-card">
+        <div class="card-header">
+          <div class="card-icon">📋</div>
+          <h2 class="card-title">Overall Feedback</h2>
+        </div>
+        {% if feedback %}
+          <ul class="issue-list">
+            {% for item in feedback %}
+              <li class="issue-item">{{ item }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="no-issues">📊 Review your resume structure</p>
+        {% endif %}
+      </section>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-section">
+      <div class="action-buttons">
+        <a href="{% url 'ARDAA:index' %}" class="btn btn-primary">
+          🔄 Analyze Another Resume
+        </a>
+        <a href="{% url 'resumebuild:build_form' %}" class="btn btn-secondary">
+          🛠️ Build New Resume
+        </a>
+      </div>
+    </div>
+  </div>
+</main>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const score = {{ ats_score|default:0 }};
+  
+  // Animate score counter
+  const scoreElement = document.querySelector('.score-value');
+  if (scoreElement) {
+    const targetScore = parseInt(scoreElement.getAttribute('data-score'));
+    let currentScore = 0;
+    const duration = 2000; // 2 seconds
+    const increment = targetScore / (duration / 16); // 60fps
+    
+    const updateScore = () => {
+      currentScore += increment;
+      if (currentScore < targetScore) {
+        scoreElement.textContent = Math.floor(currentScore);
+        requestAnimationFrame(updateScore);
+      } else {
+        scoreElement.textContent = targetScore;
+      }
+    };
+    
+    setTimeout(updateScore, 500);
+  }
+  
+  // Animate progress circle
+  const progressCircle = document.querySelector('.progress-fill');
+  if (progressCircle) {
+    const radius = 90;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (score / 100) * circumference;
+    
+    progressCircle.style.strokeDasharray = circumference;
+    progressCircle.style.strokeDashoffset = circumference;
+    
+    setTimeout(() => {
+      progressCircle.style.transition = 'stroke-dashoffset 1.5s ease-in-out';
+      progressCircle.style.strokeDashoffset = offset;
+    }, 500);
+  }
+  
+  // Add confetti for high scores
+  if (score >= 80) {
+    setTimeout(createConfetti, 1000);
+  }
+  
+  function createConfetti() {
+    const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+    
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.style.cssText = `
+        position: fixed;
+        width: 10px;
+        height: 10px;
+        background: ${colors[Math.floor(Math.random() * colors.length)]};
+        top: -20px;
+        left: ${Math.random() * 100}%;
+        opacity: ${Math.random() + 0.5};
+        border-radius: ${Math.random() > 0.5 ? '50%' : '0'};
+        pointer-events: none;
+        z-index: 9999;
+      `;
+      
+      document.body.appendChild(confetti);
+      
+      const animation = confetti.animate([
+        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+        { transform: `translateY(${window.innerHeight}px) rotate(${360 * Math.random()}deg)`, opacity: 0 }
+      ], {
+        duration: 3000 + Math.random() * 2000,
+        easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)'
+      });
+      
+      animation.onfinish = () => confetti.remove();
+    }
+  }
+});
+</script>
+{% endblock %}

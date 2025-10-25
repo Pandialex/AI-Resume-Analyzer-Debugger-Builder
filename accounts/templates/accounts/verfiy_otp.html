@@ -1,0 +1,29 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Verify OTP - ARDAA</title>
+    <link rel="stylesheet" href="{% static 'accounts/css/auth.css' %}">
+</head>
+<body>
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Verify OTP</h2>
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+        <form method="POST">
+            {% csrf_token %}
+            <div class="form-group">
+                <label for="otp">Enter OTP</label>
+                <input type="text" name="otp" id="otp" required>
+            </div>
+            <div class="form-actions">
+                <button type="submit">Verify OTP</button>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>

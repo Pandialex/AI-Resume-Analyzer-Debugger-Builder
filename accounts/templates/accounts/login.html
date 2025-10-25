@@ -1,0 +1,512 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - ARDAA</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #0066cc;
+      --secondary-color: #004499;
+      --accent-color: #00d9ff;
+      --text-color: #ffffff;
+      --text-secondary: #b0c4de;
+      --background-color: #001f3f;
+      --card-bg: rgba(0, 31, 63, 0.7);
+      --input-bg: rgba(255, 255, 255, 0.05);
+      --input-border: rgba(255, 255, 255, 0.1);
+      --error-color: #ff4d4d;
+      --success-color: #4ade80;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #001f3f 0%, #003366 100%);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Animated background elements */
+    .bg-animation {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .bg-animation span {
+      position: absolute;
+      display: block;
+      width: 20px;
+      height: 20px;
+      background: rgba(255, 255, 255, 0.05);
+      animation: move 25s linear infinite;
+      bottom: -150px;
+    }
+
+    .bg-animation span:nth-child(1) {
+      left: 25%;
+      width: 80px;
+      height: 80px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation span:nth-child(2) {
+      left: 10%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 2s;
+      animation-duration: 12s;
+    }
+
+    .bg-animation span:nth-child(3) {
+      left: 70%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 4s;
+    }
+
+    .bg-animation span:nth-child(4) {
+      left: 40%;
+      width: 60px;
+      height: 60px;
+      animation-delay: 0s;
+      animation-duration: 18s;
+    }
+
+    .bg-animation span:nth-child(5) {
+      left: 65%;
+      width: 20px;
+      height: 20px;
+      animation-delay: 0s;
+    }
+
+    .bg-animation span:nth-child(6) {
+      left: 75%;
+      width: 110px;
+      height: 110px;
+      animation-delay: 3s;
+    }
+
+    .bg-animation span:nth-child(7) {
+      left: 35%;
+      width: 150px;
+      height: 150px;
+      animation-delay: 7s;
+    }
+
+    .bg-animation span:nth-child(8) {
+      left: 50%;
+      width: 25px;
+      height: 25px;
+      animation-delay: 15s;
+      animation-duration: 45s;
+    }
+
+    .bg-animation span:nth-child(9) {
+      left: 20%;
+      width: 15px;
+      height: 15px;
+      animation-delay: 2s;
+      animation-duration: 35s;
+    }
+
+    .bg-animation span:nth-child(10) {
+      left: 85%;
+      width: 150px;
+      height: 150px;
+      animation-delay: 0s;
+      animation-duration: 11s;
+    }
+
+    @keyframes move {
+      0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+      }
+      100% {
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+      }
+    }
+
+    .container {
+      width: 100%;
+      max-width: 450px;
+      padding: 20px;
+      z-index: 1;
+    }
+
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+    }
+
+    .card-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .card-header h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-bottom: 10px;
+      background: linear-gradient(90deg, var(--text-color), var(--accent-color));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .card-header p {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+      position: relative;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 15px 15px 15px 45px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 16px;
+      transition: all 0.3s ease;
+    }
+
+    .form-control:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      background: rgba(255, 255, 255, 0.08);
+      box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.2);
+    }
+
+    .form-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-secondary);
+      font-size: 20px;
+      transition: color 0.3s ease;
+    }
+
+    .form-control:focus ~ .form-icon {
+      color: var(--accent-color);
+    }
+
+    .form-options {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .remember-me {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remember-me input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent-color);
+    }
+
+    .remember-me label {
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .forgot-password {
+      font-size: 14px;
+    }
+
+    .forgot-password a {
+      color: var(--accent-color);
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+
+    .forgot-password a:hover {
+      color: var(--text-color);
+      text-decoration: underline;
+    }
+
+    .btn {
+      padding: 14px 20px;
+      border-radius: 8px;
+      cursor: pointer;
+      border: none;
+      font-size: 16px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .btn-primary {
+      background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+      color: white;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .alert {
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      animation: slideDown 0.3s ease;
+    }
+
+    @keyframes slideDown {
+      from {
+        opacity: 0;
+        transform: translateY(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .alert-error {
+      background: rgba(255, 77, 77, 0.1);
+      color: var(--error-color);
+      border: 1px solid rgba(255, 77, 77, 0.2);
+    }
+
+    .register-link {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--text-secondary);
+    }
+
+    .register-link a {
+      color: var(--accent-color);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .register-link a:hover {
+      color: var(--text-color);
+      text-decoration: underline;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      border-top-color: white;
+      animation: spin 1s ease-in-out infinite;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .social-login {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    .social-login p {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 15px;
+      position: relative;
+    }
+
+    .social-login p::before {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      right: 0;
+      height: 1px;
+      background: var(--input-border);
+      z-index: 1;
+    }
+
+    .social-login p span {
+      background: var(--card-bg);
+      padding: 0 15px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .social-buttons {
+      display: flex;
+      gap: 15px;
+    }
+
+    .social-btn {
+      flex: 1;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--input-border);
+      background: var(--input-bg);
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .social-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 480px) {
+      .container {
+        padding: 10px;
+      }
+      
+      .card {
+        padding: 30px 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-animation">
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+    <span></span>
+  </div>
+
+  <div class="container">
+    <div class="card">
+      <div class="card-header">
+        <h2>Welcome Back</h2>
+        <p>Login to your ARDAA account</p>
+      </div>
+
+      {% if error %}
+        <div class="alert alert-error">{{ error }}</div>
+      {% endif %}
+
+      <form id="login-form" method="post">
+        {% csrf_token %}
+        
+        <div class="form-group">
+          <input class="form-control" name="username" placeholder="Email Address" required>
+          <span class="material-icons form-icon">email</span>
+        </div>
+        
+        <div class="form-group">
+          <input class="form-control" name="password" type="password" placeholder="Password" required>
+          <span class="material-icons form-icon">lock</span>
+        </div>
+
+        <div class="form-options">
+          <div class="remember-me">
+            <input type="checkbox" id="remember-me" name="remember-me">
+            <label for="remember-me">Remember me</label>
+          </div>
+          <div class="forgot-password">
+            <a href="{% url 'accounts:forget_password_request' %}">Forgot password?</a>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="login-btn">
+          <span id="login-btn-text">Login</span>
+          <span id="login-btn-spinner" class="spinner" style="display: none;"></span>
+        </button>
+      </form>
+
+      <div class="social-login">
+        <p><span>OR</span></p>
+        <div class="social-buttons">
+          <div class="social-btn">
+            <span class="material-icons">account_circle</span>
+            <span>Google</span>
+          </div>
+          <div class="social-btn">
+            <span class="material-icons">facebook</span>
+            <span>Facebook</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="register-link">
+        New to ARDAA? <a href="{% url 'accounts:register' %}">Create an account</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const loginForm = document.getElementById('login-form');
+    const loginBtn = document.getElementById('login-btn');
+    const loginBtnText = document.getElementById('login-btn-text');
+    const loginBtnSpinner = document.getElementById('login-btn-spinner');
+
+    loginForm.addEventListener('submit', function(e) {
+      // Show loading state
+      loginBtn.disabled = true;
+      loginBtnText.style.display = 'none';
+      loginBtnSpinner.style.display = 'inline-block';
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,169 @@
+/* === 🌈 HERO SECTION === */
+.hero-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  overflow: hidden;
+  background: radial-gradient(circle at top left, #001f3f, #000);
+  color: #fff;
+  z-index: 1;
+}
+
+/* 🌈 Background Animation */
+.animated-bg {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, #00d9ff, #0077ff, #6f00ff, #00ffa3);
+  background-size: 400% 400%;
+  animation: gradientMove 8s ease infinite;
+  opacity: 0.25;
+  z-index: 0;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* HERO CONTENT */
+.hero-container {
+  z-index: 2;
+  max-width: 900px;
+  padding: 20px;
+  animation: fadeInHero 1.4s ease;
+}
+
+@keyframes fadeInHero {
+  from { opacity: 0; transform: translateY(30px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.hero-title {
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  letter-spacing: 1px;
+  background: linear-gradient(90deg, #00d9ff, #0077ff, #6f00ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.highlight {
+  background: linear-gradient(90deg, #ffd700, #ff8a00);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero-sub {
+  font-size: 1.3rem;
+  line-height: 1.8;
+  color: #dcdcdc;
+  margin-bottom: 40px;
+}
+
+/* === 🚀 Blinking Build Resume Button === */
+.blink-btn {
+  background: linear-gradient(135deg, #00d9ff, #0077ff, #6f00ff);
+  background-size: 300%;
+  color: #fff;
+  padding: 16px 36px;
+  border-radius: 50px;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: 0.6px;
+  text-decoration: none;
+  display: inline-block;
+  box-shadow: 0 0 25px rgba(0, 217, 255, 0.6);
+  animation: blinkGlow 1.5s infinite ease-in-out, gradientShift 4s linear infinite, floatY 3s ease-in-out infinite;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.blink-btn:hover {
+  transform: scale(1.1) translateY(-4px);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.9);
+}
+
+/* ✨ Animations ✨ */
+@keyframes blinkGlow {
+  0%, 100% { opacity: 1; box-shadow: 0 0 25px rgba(0, 217, 255, 0.8); }
+  50% { opacity: 0.6; box-shadow: 0 0 8px rgba(0, 217, 255, 0.3); }
+}
+
+@keyframes gradientShift {
+  0% { background-position: 0%; }
+  100% { background-position: 200%; }
+}
+
+@keyframes floatY {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-title { font-size: 2.2rem; }
+  .hero-sub { font-size: 1.1rem; }
+  .blink-btn { padding: 14px 28px; font-size: 16px; }
+}
+
+/* === 🌟 FEATURES SECTION === */
+.section-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text-primary, #fff);
+  margin-bottom: 50px;
+  position: relative;
+}
+
+.section-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 4px;
+  background: linear-gradient(90deg, #00d9ff, #0077ff);
+  border-radius: 2px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 30px;
+}
+
+.feature {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 0 20px rgba(0, 217, 255, 0.1);
+  text-align: center;
+  transition: 0.4s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.feature:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 0 40px rgba(0, 217, 255, 0.2);
+}
+
+.feature-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+  color: #00d9ff;
+  background: rgba(0, 217, 255, 0.1);
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 16px;
+}

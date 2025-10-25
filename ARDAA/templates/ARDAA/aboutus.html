@@ -1,0 +1,667 @@
+{% extends "ARDAA/base.html" %}
+{% block title %}About Us - ARDAA 🚀{% endblock %}
+
+{% block extra_css %}
+<style>
+/* 🌌 BODY & GLOBAL */
+body {
+  font-family: "Poppins", sans-serif;
+  background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+  color: #e4f9ff;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.7;
+}
+
+/* 🌟 PARTICLE BACKGROUND */
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  opacity: 0.3;
+  pointer-events: none;
+  animation: floatParticle linear infinite;
+}
+@keyframes floatParticle {
+  0% { transform: translateY(0) rotate(0deg);}
+  50% { transform: translateY(-50px) rotate(180deg);}
+  100% { transform: translateY(0) rotate(360deg);}
+}
+
+/* ✨ HERO SECTION */
+.about-hero {
+  background: linear-gradient(135deg, rgba(37,211,102,0.1), rgba(0,212,255,0.1));
+  padding: 80px 25px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  max-width: 1200px;
+  margin: 60px auto;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 1s ease forwards;
+}
+.about-hero::before {
+  content: '🤖';
+  font-size: 140px;
+  position: absolute;
+  top: -30px;
+  right: 30px;
+  opacity: 0.15;
+  animation: float 8s ease-in-out infinite;
+}
+.about-inner h1 {
+  font-size: 3.5rem;
+  color: #00ffcc;
+  font-weight: 800;
+  margin-bottom: 20px;
+  text-shadow: 2px 2px 20px rgba(0,255,204,0.4);
+}
+.about-inner .tagline {
+  font-size: 1.4rem;
+  color: #a0e7ff;
+  margin-bottom: 30px;
+  font-weight: 300;
+}
+.about-inner .mission-statement {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  margin-bottom: 30px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+  color: #ccefff;
+}
+.about-cta a {
+  display: inline-block;
+  padding: 16px 32px;
+  border-radius: 50px;
+  background: linear-gradient(135deg, #00ffcc, #0078ff);
+  color: #111;
+  font-weight: 700;
+  font-size: 1.2rem;
+  transition: all 0.4s ease;
+  box-shadow: 0 8px 25px rgba(0,255,204,0.4);
+  margin: 10px;
+  text-decoration: none;
+}
+.about-cta a:hover {
+  transform: scale(1.05);
+  box-shadow: 0 12px 35px rgba(0,255,204,0.6);
+  background: linear-gradient(135deg, #0078ff, #00ffcc);
+  color: #fff;
+}
+
+/* 🏢 COMPANY OVERVIEW */
+.company-overview {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+.section-title {
+  text-align: center;
+  font-size: 2.5rem;
+  color: #00ffcc;
+  margin-bottom: 50px;
+  position: relative;
+}
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #00ffcc, #0078ff);
+  border-radius: 2px;
+}
+.overview-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+}
+.overview-text {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: #ccefff;
+}
+.overview-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.stat-card {
+  background: rgba(255,255,255,0.05);
+  padding: 25px;
+  border-radius: 15px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s ease;
+}
+.stat-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.08);
+}
+.stat-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #00ffcc;
+  margin-bottom: 10px;
+}
+.stat-label {
+  font-size: 0.9rem;
+  color: #a0e7ff;
+}
+
+/* 🌟 FEATURE CARDS */
+.features-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-top: 50px;
+}
+.feature-card {
+  background: rgba(0,0,0,0.25);
+  border-radius: 20px;
+  padding: 35px 25px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.4);
+  text-align: center;
+  transform: translateY(40px);
+  opacity: 0;
+  transition: all 0.5s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.feature-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 25px 50px rgba(0,255,204,0.3);
+  background: rgba(0,0,0,0.35);
+}
+.feature-icon {
+  font-size: 3rem;
+  margin-bottom: 20px;
+  display: block;
+}
+.feature-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  color: #00ffcc;
+}
+.feature-card p {
+  font-size: 1rem;
+  color: #ccefff;
+  margin-bottom: 15px;
+  line-height: 1.6;
+}
+.feature-list {
+  text-align: left;
+  margin-top: 15px;
+}
+.feature-list li {
+  margin-bottom: 8px;
+  color: #a0e7ff;
+  font-size: 0.9rem;
+}
+
+/* 🎯 OUR MISSION & VISION */
+.mission-vision {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+.mv-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+.mv-card {
+  background: rgba(255,255,255,0.05);
+  padding: 40px 30px;
+  border-radius: 20px;
+  text-align: center;
+  border: 1px solid rgba(255,255,255,0.1);
+  transition: transform 0.3s ease;
+}
+.mv-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.08);
+}
+.mv-card h3 {
+  font-size: 1.8rem;
+  color: #00ffcc;
+  margin-bottom: 20px;
+}
+.mv-card p {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #ccefff;
+}
+
+/* 👥 TEAM VALUES */
+.values-section {
+  max-width: 1200px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+.values-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 25px;
+  margin-top: 50px;
+}
+.value-card {
+  background: rgba(255,255,255,0.05);
+  padding: 30px 25px;
+  border-radius: 15px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+.value-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255,255,255,0.08);
+}
+.value-icon {
+  font-size: 2.5rem;
+  margin-bottom: 15px;
+  display: block;
+}
+.value-card h4 {
+  font-size: 1.3rem;
+  color: #00ffcc;
+  margin-bottom: 15px;
+}
+.value-card p {
+  font-size: 0.95rem;
+  color: #ccefff;
+  line-height: 1.6;
+}
+
+/* 🕒 TIMELINE */
+.timeline-section {
+  max-width: 1000px;
+  margin: 80px auto;
+  padding: 0 25px;
+}
+.timeline {
+  position: relative;
+  margin-top: 50px;
+}
+.timeline::after {
+  content: '';
+  position: absolute;
+  width: 6px;
+  background: linear-gradient(to bottom, #25d366, #00d4ff);
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  margin-left: -3px;
+  border-radius: 3px;
+}
+.timeline-step {
+  padding: 25px;
+  position: relative;
+  width: 50%;
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 0.6s ease;
+}
+.timeline-step:nth-child(odd) { left: 0; }
+.timeline-step:nth-child(even) { left: 50%; }
+.timeline-step::before {
+  content: '⚡';
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  background: #00ffcc;
+  border: 4px solid #fff;
+  top: 30px;
+  border-radius: 50%;
+  z-index: 1;
+  text-align: center;
+  line-height: 24px;
+  font-size: 16px;
+  animation: pulse 2s infinite;
+}
+.timeline-step:nth-child(odd)::before { right: -15px; }
+.timeline-step:nth-child(even)::before { left: -15px; }
+.timeline-content {
+  padding: 25px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 15px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.timeline-content h4 { 
+  margin: 0; 
+  color: #00d4ff; 
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+}
+.timeline-content p { 
+  margin: 0; 
+  color: #e4f9ff; 
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+/* 📞 CTA SECTION */
+.cta-section {
+  max-width: 800px;
+  margin: 80px auto;
+  padding: 60px 25px;
+  text-align: center;
+  background: linear-gradient(135deg, rgba(37,211,102,0.1), rgba(0,212,255,0.1));
+  border-radius: 20px;
+  border: 1px solid rgba(255,255,255,0.1);
+}
+.cta-section h2 {
+  font-size: 2.5rem;
+  color: #00ffcc;
+  margin-bottom: 20px;
+}
+.cta-section p {
+  font-size: 1.2rem;
+  color: #ccefff;
+  margin-bottom: 30px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ✨ ANIMATIONS */
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(-20px); } 
+  to { opacity: 1; transform: translateY(0); } 
+}
+@keyframes float { 
+  0%, 100% { transform: translateY(0); } 
+  50% { transform: translateY(-15px); } 
+}
+@keyframes pulse { 
+  0% { box-shadow: 0 0 0 0 rgba(0,255,204,0.6); }
+  70% { box-shadow: 0 0 0 20px rgba(0,255,204,0); }
+  100% { box-shadow: 0 0 0 0 rgba(0,255,204,0); }
+}
+
+/* 📱 RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+  .about-inner h1 { font-size: 2.5rem; }
+  .overview-content { grid-template-columns: 1fr; }
+  .mv-grid { grid-template-columns: 1fr; }
+  .timeline::after { left: 31px; }
+  .timeline-step { width: 100%; padding-left: 70px; padding-right: 25px; left: 0 !important; }
+  .timeline-step::before { left: 21px !important; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 🌌 PARTICLES -->
+<div id="particles">
+  {% for i in "12345678910" %}
+    <div class="particle" style="width:{{10|add:i}}px; height:{{10|add:i}}px; top:{{forloop.counter0|add:"10"}}%; left:{{forloop.counter0|add:"5"}}%; background:rgba(255,255,255,0.2); animation-duration:{{3|add:forloop.counter}}s;"></div>
+  {% endfor %}
+</div>
+
+<!-- 🚀 HERO SECTION -->
+<section class="about-hero">
+  <div class="about-inner">
+    <h1>About ARDAA 🤖</h1>
+    <p class="tagline">Revolutionizing Career Success Through AI-Powered Resume Intelligence</p>
+    <p class="mission-statement">
+      ARDAA is an advanced AI platform designed to bridge the gap between talented professionals and their dream careers. 
+      We combine cutting-edge artificial intelligence with deep industry insights to transform how job seekers approach 
+      resume building, ATS optimization, and career development.
+    </p>
+    <div class="about-cta">
+      <a class="btn btn-primary" href="/">🚀 Try ARDAA Now</a>
+      <a class="btn btn-primary" href="#features">📊 Explore Features</a>
+    </div>
+  </div>
+</section>
+
+<!-- 🏢 COMPANY OVERVIEW -->
+<section class="company-overview">
+  <h2 class="section-title">Our Story</h2>
+  <div class="overview-content">
+    <div class="overview-text">
+      <p>Founded in 2024, ARDAA emerged from a simple observation: brilliant professionals were being overlooked due to poorly optimized resumes and lack of ATS compatibility. We set out to change that.</p>
+      <p>Our platform leverages sophisticated NLP algorithms and machine learning to analyze resumes against industry standards, job descriptions, and ATS requirements. We provide actionable insights that help candidates stand out in competitive job markets.</p>
+      <p>Today, ARDAA serves thousands of users worldwide, helping them unlock their career potential through data-driven resume optimization and personalized career guidance.</p>
+    </div>
+    <div class="overview-stats">
+      <div class="stat-card">
+        <div class="stat-number">10K+</div>
+        <div class="stat-label">Users Helped</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">98%</div>
+        <div class="stat-label">Success Rate</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">50+</div>
+        <div class="stat-label">Industries Covered</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">AI Support</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 🌟 FEATURES SECTION -->
+<section id="features" class="features-section">
+  <h2 class="section-title">Why Choose ARDAA?</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <span class="feature-icon">🔐</span>
+      <h3>Smart User Management</h3>
+      <p>Secure registration with OTP verification and comprehensive profile management</p>
+      <ul class="feature-list">
+        <li>• Secure email verification</li>
+        <li>• Password recovery system</li>
+        <li>• Profile customization</li>
+        <li>• Usage tracking</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">📊</span>
+      <h3>Advanced Resume Analysis</h3>
+      <p>Comprehensive ATS compatibility scoring and optimization recommendations</p>
+      <ul class="feature-list">
+        <li>• Real-time ATS scoring</li>
+        <li>• Keyword optimization</li>
+        <li>• Grammar and style checks</li>
+        <li>• Industry-specific tips</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🛠️</span>
+      <h3>AI Resume Builder</h3>
+      <p>Create professional resumes with intelligent templates and content suggestions</p>
+      <ul class="feature-list">
+        <li>• Smart templates</li>
+        <li>• Content generation</li>
+        <li>• Format optimization</li>
+        <li>• Export in multiple formats</li>
+      </ul>
+    </div>
+    <div class="feature-card">
+      <span class="feature-icon">🤖</span>
+      <h3>Career AI Assistant</h3>
+      <p>24/7 AI-powered career guidance and interview preparation</p>
+      <ul class="feature-list">
+        <li>• Personalized career advice</li>
+        <li>• Interview preparation</li>
+        <li>• Salary negotiation tips</li>
+        <li>• Industry insights</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- 🎯 MISSION & VISION -->
+<section class="mission-vision">
+  <h2 class="section-title">Our Vision</h2>
+  <div class="mv-grid">
+    <div class="mv-card">
+      <h3>🎯 Our Mission</h3>
+      <p>To democratize career success by providing every professional with access to enterprise-grade resume optimization tools and AI-powered career guidance, regardless of their background or experience level.</p>
+    </div>
+    <div class="mv-card">
+      <h3>🔭 Our Vision</h3>
+      <p>To become the world's most trusted AI career platform, helping millions of professionals unlock their full potential and bridge the gap between talent and opportunity through intelligent technology.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 👥 TEAM VALUES -->
+<section class="values-section">
+  <h2 class="section-title">Our Values</h2>
+  <div class="values-grid">
+    <div class="value-card">
+      <span class="value-icon">💡</span>
+      <h4>Innovation</h4>
+      <p>Constantly pushing boundaries with cutting-edge AI technology to deliver unparalleled career insights.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🤝</span>
+      <h4>Empowerment</h4>
+      <p>Equipping job seekers with the tools and knowledge they need to take control of their careers.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🎯</span>
+      <h4>Precision</h4>
+      <p>Delivering accurate, data-driven recommendations that make a real impact on job search success.</p>
+    </div>
+    <div class="value-card">
+      <span class="value-icon">🔒</span>
+      <h4>Privacy</h4>
+      <p>Maintaining the highest standards of data security and user privacy in everything we do.</p>
+    </div>
+  </div>
+</section>
+
+<!-- 🕒 TIMELINE -->
+<section class="timeline-section">
+  <h2 class="section-title">How ARDAA Works</h2>
+  <div class="timeline">
+    <div class="timeline-step">
+      <div class="timeline-content">
+        <h4>Step 1: Free Analysis 🌟</h4>
+        <p>Start with a complimentary resume analysis without registration. Get instant ATS compatibility scores and basic optimization tips.</p>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-content">
+        <h4>Step 2: Register & Verify 🔑</h4>
+        <p>Create your account with secure OTP verification to unlock unlimited analyses and full feature access.</p>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-content">
+        <h4>Step 3: Deep Analysis 📊</h4>
+        <p>Access comprehensive resume insights including keyword optimization, formatting recommendations, and industry-specific advice.</p>
+      </div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-content">
+        <h4>Step 4: AI Assistant 🤖</h4>
+        <p>Engage with our AI career assistant for personalized guidance, interview preparation, and ongoing career support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 📞 CTA SECTION -->
+<section class="cta-section">
+  <h2>Ready to Transform Your Career?</h2>
+  <p>Join thousands of successful professionals who have accelerated their career growth with ARDAA's AI-powered platform.</p>
+  <div class="about-cta">
+    <a class="btn btn-primary" href="/">Start Your Journey Today</a>
+  </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+// 🌟 Animate elements on scroll
+const animateOnScroll = (elements, threshold = 0.2) => {
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if(entry.isIntersecting){
+        entry.target.style.opacity = 1;
+        entry.target.style.transform = 'translateY(0)';
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold });
+  
+  elements.forEach(element => observer.observe(element));
+};
+
+// Animate feature cards
+const featureCards = document.querySelectorAll('.feature-card');
+animateOnScroll(featureCards, 0.1);
+
+// Animate timeline steps
+const timelineSteps = document.querySelectorAll('.timeline-step');
+animateOnScroll(timelineSteps, 0.3);
+
+// Animate value cards
+const valueCards = document.querySelectorAll('.value-card');
+animateOnScroll(valueCards, 0.2);
+
+// 🌌 Floating particles motion
+const particles = document.querySelectorAll('.particle');
+particles.forEach((p, i) => {
+  p.style.top = Math.random() * 100 + '%';
+  p.style.left = Math.random() * 100 + '%';
+  p.style.width = (5 + Math.random() * 20) + 'px';
+  p.style.height = p.style.width;
+  p.style.background = `rgba(255,255,255,${0.1 + Math.random() * 0.3})`;
+  p.style.animationDuration = (3 + Math.random() * 8) + 's';
+  p.style.animationDelay = Math.random() * 5 + 's';
+});
+
+// 📊 Counter animation for stats
+const statNumbers = document.querySelectorAll('.stat-number');
+const animateCounter = (element, finalValue, duration = 2000) => {
+  let start = 0;
+  const increment = finalValue / (duration / 16);
+  const timer = setInterval(() => {
+    start += increment;
+    if (start >= finalValue) {
+      element.textContent = finalValue + (element.textContent.includes('+') ? '+' : '');
+      clearInterval(timer);
+    } else {
+      element.textContent = Math.floor(start) + (element.textContent.includes('+') ? '+' : '');
+    }
+  }, 16);
+};
+
+// Start counter animation when stats come into view
+const statObserver = new IntersectionObserver(entries => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const stat = entry.target;
+      const value = parseInt(stat.textContent);
+      if (!isNaN(value)) {
+        animateCounter(stat, value);
+      }
+      statObserver.unobserve(stat);
+    }
+  });
+}, { threshold: 0.5 });
+
+statNumbers.forEach(stat => statObserver.observe(stat));
+</script>
+{% endblock %}

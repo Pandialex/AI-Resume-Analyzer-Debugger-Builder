@@ -1,0 +1,17 @@
+ARDAA Verification Code
+
+Hello,
+
+To complete your verification process, please use the following One-Time Password (OTP):
+
+{{ otp }}
+
+This code is valid for {{ validity_minutes }} minutes only.
+
+Security Alert: Never share this code with anyone. ARDAA team will never ask for your OTP.
+
+If you didn't request this code, please ignore this email or contact our support team immediately if you suspect any unauthorized activity.
+
+Need help? Contact our support team: support@ardaa.com
+
+© {{ year }} ARDAA. All rights reserved.
