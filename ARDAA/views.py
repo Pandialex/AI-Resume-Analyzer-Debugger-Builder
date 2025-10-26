@@ -50,9 +50,8 @@ def index(request):
     """Home page view."""
     form = ResumeUploadForm()
     return render(request, "ARDAA/index.html", {"form": form})
-
 def analyze(request):
-    """Analyze resume against job description."""
+    """Analyze resume against job description - NO LOGIN REQUIRED."""
     if request.method == "POST":
         print("🚀 DEBUG: Analyze view called - POST request")
         
@@ -85,31 +84,7 @@ def analyze(request):
             messages.error(request, "Please provide a detailed job description (at least 30 characters).")
             return render(request, "ARDAA/index.html", {"form": form})
 
-        # Handle unauthenticated users
-        if not request.user.is_authenticated:
-            print("🔐 DEBUG: User not authenticated, storing in session")
-            try:
-                base = _ensure_temp_dir()
-                temp_name = f"{uuid.uuid4().hex}_{resume_file.name}"
-                temp_path = os.path.join(TEMP_DIR, temp_name)
-                
-                with default_storage.open(temp_path, 'wb+') as destination:
-                    for chunk in resume_file.chunks():
-                        destination.write(chunk)
-
-                request.session["temp_resume_path"] = temp_path
-                request.session["temp_job_desc"] = job_desc
-                request.session.modified = True
-
-                login_url = reverse("accounts:login")
-                return redirect(f"{login_url}?next={reverse('ARDAA:after_login')}")
-                
-            except Exception as e:
-                print(f"❌ DEBUG: File storage error: {e}")
-                messages.error(request, "Error storing file. Please try again.")
-                return render(request, "ARDAA/index.html", {"form": form})
-
-        # Process analysis for authenticated users
+        # Process analysis for BOTH authenticated and unauthenticated users
         try:
             print("🔍 DEBUG: Starting resume processing...")
             
@@ -162,81 +137,87 @@ def analyze(request):
     form = ResumeUploadForm()
     return render(request, "ARDAA/index.html", {"form": form})
 
+
+
+# def after_login(request):
+#     """Continue analysis after user login."""
+#     if not request.user.is_authenticated:
+#         print("❌ DEBUG: User not authenticated in after_login")
+#         return redirect('accounts:login')
+
+#     temp_resume_path = request.session.get("temp_resume_path")
+#     job_desc = request.session.get("temp_job_desc")
+
+#     print(f"🔍 DEBUG: after_login - temp_resume_path: {temp_resume_path}")
+#     print(f"🔍 DEBUG: after_login - job_desc exists: {bool(job_desc)}")
+
+#     if not temp_resume_path or not job_desc:
+#         print("❌ DEBUG: Session data missing in after_login")
+#         messages.error(request, "Your session has expired. Please upload your resume again.")
+#         return redirect("ARDAA:index")
+
+#     try:
+#         print("🔍 DEBUG: Processing stored resume file...")
+        
+#         # Read stored file
+#         with default_storage.open(temp_resume_path, 'rb') as f:
+#             file_data = f.read()
+        
+#         # Extract text
+#         ext = temp_resume_path.split('.')[-1]
+#         resume_text = extract_text(file_data, ext)
+
+#         if not resume_text.strip():
+#             print("❌ DEBUG: Could not read stored resume file")
+#             messages.error(request, "Could not read the resume file. Please try again.")
+#             return redirect("ARDAA:index")
+
+#         print(f"📊 DEBUG: Stored resume text length: {len(resume_text)}")
+#         print("🤖 DEBUG: Calling AI analysis for stored resume...")
+
+#         # Perform AI analysis
+#         analysis_result = analyze_resume(resume_text, job_desc)
+        
+#         print(f"✅ DEBUG: Stored resume analysis complete - Score: {analysis_result.get('ats_score')}")
+
+#         # Store results in session
+#         request.session['analysis_results'] = {
+#             "ats_score": analysis_result.get('ats_score', 50),
+#             "grammar": analysis_result.get('grammar', ["No grammar issues found"]),
+#             "feedback": analysis_result.get('feedback', ["Analysis completed successfully"]),
+#             "suggestions": analysis_result.get('suggestions', ["Add more relevant keywords from job description"]),
+#             "ai_tips": analysis_result.get('ai_tips', [
+#                 "Optimize your resume with relevant keywords from the job description",
+#                 "Use quantifiable achievements to demonstrate impact",
+#                 "Ensure your resume is ATS-friendly with standard formatting",
+#                 "Highlight transferable skills that match the job requirements"
+#             ]),
+#             "resume_text": resume_text[:1000],
+#             "job_desc": job_desc[:500],
+#         }
+#         request.session.modified = True
+
+#         # Clean up temporary files
+#         try:
+#             request.session.pop("temp_resume_path", None)
+#             request.session.pop("temp_job_desc", None)
+#             default_storage.delete(temp_resume_path)
+#             print("🧹 DEBUG: Temporary files cleaned up")
+#         except Exception as e:
+#             print(f"⚠️ DEBUG: Cleanup error: {e}")
+
+#         print("🎯 DEBUG: Redirecting to result page from after_login...")
+#         return redirect("ARDAA:result_page")
+
+#     except Exception as e:
+#         print(f"💥 DEBUG: after_login error: {str(e)}")
+#         logger.error(f"After login error: {str(e)}")
+#         messages.error(request, f"An error occurred during analysis: {str(e)}")
+#         return redirect("ARDAA:index")
 def after_login(request):
-    """Continue analysis after user login."""
-    if not request.user.is_authenticated:
-        print("❌ DEBUG: User not authenticated in after_login")
-        return redirect('accounts:login')
-
-    temp_resume_path = request.session.get("temp_resume_path")
-    job_desc = request.session.get("temp_job_desc")
-
-    print(f"🔍 DEBUG: after_login - temp_resume_path: {temp_resume_path}")
-    print(f"🔍 DEBUG: after_login - job_desc exists: {bool(job_desc)}")
-
-    if not temp_resume_path or not job_desc:
-        print("❌ DEBUG: Session data missing in after_login")
-        messages.error(request, "Your session has expired. Please upload your resume again.")
-        return redirect("ARDAA:index")
-
-    try:
-        print("🔍 DEBUG: Processing stored resume file...")
-        
-        # Read stored file
-        with default_storage.open(temp_resume_path, 'rb') as f:
-            file_data = f.read()
-        
-        # Extract text
-        ext = temp_resume_path.split('.')[-1]
-        resume_text = extract_text(file_data, ext)
-
-        if not resume_text.strip():
-            print("❌ DEBUG: Could not read stored resume file")
-            messages.error(request, "Could not read the resume file. Please try again.")
-            return redirect("ARDAA:index")
-
-        print(f"📊 DEBUG: Stored resume text length: {len(resume_text)}")
-        print("🤖 DEBUG: Calling AI analysis for stored resume...")
-
-        # Perform AI analysis
-        analysis_result = analyze_resume(resume_text, job_desc)
-        
-        print(f"✅ DEBUG: Stored resume analysis complete - Score: {analysis_result.get('ats_score')}")
-
-        # Store results in session
-        request.session['analysis_results'] = {
-            "ats_score": analysis_result.get('ats_score', 50),
-            "grammar": analysis_result.get('grammar', ["No grammar issues found"]),
-            "feedback": analysis_result.get('feedback', ["Analysis completed successfully"]),
-            "suggestions": analysis_result.get('suggestions', ["Add more relevant keywords from job description"]),
-            "ai_tips": analysis_result.get('ai_tips', [
-                "Optimize your resume with relevant keywords from the job description",
-                "Use quantifiable achievements to demonstrate impact",
-                "Ensure your resume is ATS-friendly with standard formatting",
-                "Highlight transferable skills that match the job requirements"
-            ]),
-            "resume_text": resume_text[:1000],
-            "job_desc": job_desc[:500],
-        }
-        request.session.modified = True
-
-        # Clean up temporary files
-        try:
-            request.session.pop("temp_resume_path", None)
-            request.session.pop("temp_job_desc", None)
-            default_storage.delete(temp_resume_path)
-            print("🧹 DEBUG: Temporary files cleaned up")
-        except Exception as e:
-            print(f"⚠️ DEBUG: Cleanup error: {e}")
-
-        print("🎯 DEBUG: Redirecting to result page from after_login...")
-        return redirect("ARDAA:result_page")
-
-    except Exception as e:
-        print(f"💥 DEBUG: after_login error: {str(e)}")
-        logger.error(f"After login error: {str(e)}")
-        messages.error(request, f"An error occurred during analysis: {str(e)}")
-        return redirect("ARDAA:index")
+    """Redirect to index since login is no longer required for analysis."""
+    messages.info(request, "You can now analyze resumes without logging in!")
+    return redirect("ARDAA:index")
 
 def result_view(request):
     """Display analysis results."""
@@ -331,4 +312,5 @@ Short answer:"""
             print(f"💥 DEBUG: Chat error: {e}")
             return JsonResponse({'error': str(e)}, status=500)
     
+
     return JsonResponse({'error': 'Only POST requests are allowed'}, status=405)
