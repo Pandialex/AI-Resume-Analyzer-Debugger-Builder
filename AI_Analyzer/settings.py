@@ -181,23 +181,47 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
+# # -----------------------------------
+# # 🔹 Email Configuration - GMAIL FOR OTP
+# # -----------------------------------
+# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp.gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'your.email@gmail.com')
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'your_app_password')
+# DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'ARDAA <noreply@ardaa.com>')
+# SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# # -----------------------------------
+# # 🔹 Session & CSRF Security
+# # -----------------------------------
+# SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+# SESSION_COOKIE_NAME = 'ardaa_session'
 # -----------------------------------
-# 🔹 Email Configuration - GMAIL FOR OTP
+# 🔹 Email Configuration - RESEND.COM
 # -----------------------------------
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST = 'smtp.resend.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'your.email@gmail.com')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'your_app_password')
-DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'ARDAA <noreply@ardaa.com>')
+EMAIL_HOST_USER = 'resend'  # Fixed username
+EMAIL_HOST_PASSWORD = os.environ.get('RESEND_API_KEY')  # Your Resend API key
+DEFAULT_FROM_EMAIL = 'onboarding@resend.dev'  # Use Resend's test domain
 SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
+# Email timeout
+EMAIL_TIMEOUT = 30
+
 # -----------------------------------
-# 🔹 Session & CSRF Security
+# 🔹 Allauth Settings - ENABLE OTP
 # -----------------------------------
-SESSION_ENGINE = 'django.contrib.sessions.backends.db'
-SESSION_COOKIE_NAME = 'ardaa_session'
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[ARDAA] '
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
+ACCOUNT_EMAIL_CONFIRMATION_EXPIRE_DAYS = 3
 
 # Security settings for production
 if 'RENDER' in os.environ:
@@ -248,3 +272,4 @@ if 'RENDER' in os.environ:
             'level': 'WARNING',
         },
     }
+
