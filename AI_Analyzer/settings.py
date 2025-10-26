@@ -15,10 +15,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------------
 # 🔹 Security
 # -----------------------------------
-SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-secret-key-for-development-only')
+# In settings.py
+SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
 if RENDER_EXTERNAL_HOSTNAME:
@@ -179,7 +180,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------
 # 🔹 Gemini API
 # -----------------------------------
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+# GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # -----------------------------------
 # 🔹 Email Configuration - NO EMAIL SENDING
@@ -241,3 +242,4 @@ if 'RENDER' in os.environ:
             'level': 'WARNING',
         },
     }
+
