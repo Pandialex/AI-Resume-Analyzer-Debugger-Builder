@@ -67,12 +67,14 @@ LOGOUT_REDIRECT_URL = '/'
 LOGIN_URL = 'accounts:login'
 
 # -----------------------------------
-# 🔹 Allauth Settings
+# 🔹 Allauth Settings - FOR GMAIL OTP
 # -----------------------------------
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # Disable email verification for now
-ACCOUNT_EMAIL_REQUIRED = False
-ACCOUNT_AUTHENTICATION_METHOD = 'username'
-ACCOUNT_LOGIN_METHODS = ['username']
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # ✅ ENABLE OTP/EMAIL VERIFICATION
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_LOGIN_METHODS = ['username', 'email']
+ACCOUNT_EMAIL_SUBJECT_PREFIX = '[ARDAA] '
+ACCOUNT_DEFAULT_HTTP_PROTOCOL = 'https'
 
 # -----------------------------------
 # 🔹 Middleware
@@ -180,21 +182,16 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # -----------------------------------
-# 🔹 Email Configuration
+# 🔹 Email Configuration - GMAIL FOR OTP
 # -----------------------------------
-# Use console email backend to avoid network errors
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-
-# If you want to use real email later, uncomment and configure:
-# EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-# EMAIL_HOST = 'smtp.gmail.com'
-# EMAIL_PORT = 587
-# EMAIL_USE_TLS = True
-# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', '')
-# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', '')
-
-DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
-SUPPORT_EMAIL = 'support@ardaa.com'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'your.email@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'your_app_password')
+DEFAULT_FROM_EMAIL = os.environ.get('DEFAULT_FROM_EMAIL', 'ARDAA <noreply@ardaa.com>')
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # -----------------------------------
 # 🔹 Session & CSRF Security
