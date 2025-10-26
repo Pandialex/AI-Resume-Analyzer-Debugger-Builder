@@ -3,7 +3,7 @@
 
 {% block content %}
 <style>
-/* === HERO SECTION STYLES === */
+/* === ENHANCED HERO SECTION STYLES === */
 .hero-section {
   position: relative;
   min-height: 100vh;
@@ -13,6 +13,42 @@
   text-align: center;
   overflow: hidden;
   padding: 120px 20px 80px;
+}
+
+.hero-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  animation: float-up 10s linear infinite;
+}
+
+@keyframes float-up {
+  0% {
+    opacity: 0;
+    transform: translateY(100vh) scale(0);
+  }
+  10% {
+    opacity: 0.4;
+  }
+  90% {
+    opacity: 0.4;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-100vh) scale(1.5);
+  }
 }
 
 .hero-content {
@@ -34,6 +70,7 @@
   color: var(--primary-color);
   margin-bottom: 2rem;
   animation: badge-float 3s ease-in-out infinite;
+  backdrop-filter: blur(10px);
 }
 
 @keyframes badge-float {
@@ -47,7 +84,7 @@
 }
 
 .hero-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-secondary);
   font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 900;
   line-height: 1.1;
@@ -104,6 +141,20 @@
 
 .stat-item {
   text-align: center;
+  position: relative;
+}
+
+.stat-item::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 40px;
+  height: 40px;
+  background: rgba(79, 70, 229, 0.1);
+  border-radius: 50%;
+  z-index: -1;
 }
 
 .stat-number {
@@ -267,7 +318,7 @@
 }
 
 .section-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-secondary);
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
   color: var(--text-primary);
@@ -293,7 +344,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--radius-lg);
   padding: 2rem;
   transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   position: relative;
@@ -327,7 +378,7 @@
   width: 70px;
   height: 70px;
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -490,7 +541,7 @@
   top: 10%;
   left: 5%;
   font-size: 15rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-secondary);
   color: rgba(0, 217, 255, 0.05);
   z-index: 0;
 }
@@ -512,7 +563,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--radius-lg);
   padding: 2rem;
   position: relative;
   transition: all 0.3s ease;
@@ -606,7 +657,7 @@
 }
 
 .cta-title {
-  font-family: var(--font-serif);
+  font-family: var(--font-secondary);
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 800;
   color: var(--text-primary);
@@ -649,7 +700,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--radius-lg);
   padding: 2.5rem;
   text-align: center;
   position: relative;
@@ -730,7 +781,7 @@
 .pricing-button {
   width: 100%;
   padding: 1rem;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   font-weight: 600;
   text-decoration: none;
   display: block;
@@ -773,7 +824,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   margin-bottom: 1rem;
   overflow: hidden;
   transition: all 0.3s ease;
@@ -843,7 +894,7 @@
   background: var(--glass-bg);
   backdrop-filter: blur(20px);
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-lg);
+  border-radius: var(--radius-lg);
   padding: 3rem;
   box-shadow: var(--shadow-xl);
   position: relative;
@@ -896,10 +947,10 @@
   color: var(--text-secondary);
 }
 
-/* === FIXED DROPZONE STYLES === */
+/* === DROPZONE STYLES === */
 .dropzone {
   border: 2px dashed var(--glass-border);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   padding: 3rem 2rem;
   margin-bottom: 2rem;
   text-align: center;
@@ -915,7 +966,6 @@
   background: rgba(0, 217, 255, 0.05);
 }
 
-/* FIX: Make file input cover entire dropzone */
 .dropzone input[type="file"] {
   position: absolute;
   top: 0;
@@ -954,7 +1004,7 @@
   border: 2px solid var(--glass-border);
   color: var(--text-primary);
   padding: 0.75rem 2rem;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -989,7 +1039,7 @@
   min-height: 150px;
   padding: 1rem;
   border: 1px solid var(--glass-border);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   background: var(--glass-bg);
   color: var(--text-primary);
   font-family: inherit;
@@ -1011,7 +1061,7 @@
   background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
   color: white;
   border: none;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   font-size: 1.125rem;
   font-weight: 600;
   cursor: pointer;
@@ -1038,7 +1088,7 @@
 /* === NOTIFICATION STYLES === */
 .notification {
   padding: 1rem;
-  border-radius: var(--border-radius-md);
+  border-radius: var(--radius-md);
   margin-bottom: 1rem;
   border-left: 4px solid;
   transition: all 0.3s ease;
@@ -1201,6 +1251,7 @@
 
 <!-- HERO SECTION -->
 <section class="hero-section">
+  <div class="hero-particles" id="heroParticles"></div>
   <div class="hero-content">
     <div class="hero-badge fade-in">
       <span class="material-icons-round">new_releases</span>
@@ -1260,7 +1311,7 @@
 
 <!-- FEATURES SECTION -->
 <section class="features-section">
-  <div class="site-container">
+  <div class="container">
     <div class="section-header fade-in">
       <div class="section-badge">
         <span class="material-icons-round">stars</span>
@@ -1362,7 +1413,7 @@
 
 <!-- HOW IT WORKS SECTION -->
 <section class="how-it-works">
-  <div class="site-container">
+  <div class="container">
     <div class="section-header fade-in">
       <div class="section-badge">
         <span class="material-icons-round">lightbulb</span>
@@ -1414,7 +1465,7 @@
 
 <!-- TESTIMONIALS SECTION -->
 <section class="testimonials">
-  <div class="site-container">
+  <div class="container">
     <div class="section-header fade-in">
       <div class="section-badge">
         <span class="material-icons-round">format_quote</span>
@@ -1494,7 +1545,7 @@
 
 <!-- PRICING SECTION -->
 <section class="pricing">
-  <div class="site-container">
+  <div class="container">
     <div class="section-header fade-in">
       <div class="section-badge">
         <span class="material-icons-round">payments</span>
@@ -1603,7 +1654,7 @@
 
 <!-- FAQ SECTION -->
 <section class="faq">
-  <div class="site-container">
+  <div class="container">
     <div class="section-header fade-in">
       <div class="section-badge">
         <span class="material-icons-round">help_outline</span>
@@ -1671,7 +1722,7 @@
 
 <!-- CTA SECTION -->
 <section class="cta-section">
-  <div class="site-container">
+  <div class="container">
     <div class="cta-content fade-in">
       <h2 class="cta-title">Ready to Land Your Dream Job?</h2>
       <p class="cta-subtitle">
@@ -1763,6 +1814,32 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Create floating particles in hero section
+  const heroParticles = document.getElementById('heroParticles');
+  if (heroParticles) {
+    for (let i = 0; i < 50; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'particle';
+      
+      // Random size between 2px and 6px
+      const size = Math.random() * 4 + 2;
+      particle.style.width = `${size}px`;
+      particle.style.height = `${size}px`;
+      
+      // Random position
+      particle.style.left = `${Math.random() * 100}%`;
+      
+      // Random animation delay and duration
+      particle.style.animationDelay = `${Math.random() * 10}s`;
+      particle.style.animationDuration = `${Math.random() * 10 + 10}s`;
+      
+      // Random opacity
+      particle.style.opacity = Math.random() * 0.5 + 0.2;
+      
+      heroParticles.appendChild(particle);
+    }
+  }
+
   // Counter Animation
   const counters = document.querySelectorAll('.stat-number');
   const speed = 200;
@@ -1832,7 +1909,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   });
   
-  // FORM INTERACTIVITY - FIXED VERSION
+  // FORM INTERACTIVITY
   const dropzone = document.getElementById('dropzone');
   const fileInput = document.getElementById('resume');
   const browseButton = document.getElementById('browseButton');
@@ -1858,7 +1935,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fileInfo.style.color = 'var(--success-color)';
   }
 
-  // Single click file selection - FIXED
+  // Single click file selection
   if (browseButton && fileInput) {
     browseButton.addEventListener('click', (e) => {
       e.preventDefault();
@@ -1911,7 +1988,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Form submit validation - FIXED
+  // Form submit validation
   if (analyzeForm) {
     analyzeForm.addEventListener('submit', (e) => {
       const hasFile = fileInput && fileInput.files && fileInput.files.length > 0;
