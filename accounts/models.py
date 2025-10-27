@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
     def create_superuser(self, email, name, password=None, **extra_fields):
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
-        extra_fields.setdefault("is_active", True)
+        extra_fields.setdefault("is_active", True)  # ✅ Ensure superuser is active
 
         if extra_fields.get("is_staff") is not True:
             raise ValueError("Superuser must have is_staff=True.")
@@ -33,7 +33,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(max_length=150)
     phone = models.CharField(max_length=20, blank=True, null=True)
 
-    is_active = models.BooleanField(default=False)  # will be set True after OTP verification
+    is_active = models.BooleanField(default=True)  # ✅ CHANGED TO True
     is_staff = models.BooleanField(default=False)
     date_joined = models.DateTimeField(auto_now_add=True)
     last_login = models.DateTimeField(blank=True, null=True)
