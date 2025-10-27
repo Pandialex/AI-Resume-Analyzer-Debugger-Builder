@@ -25,6 +25,10 @@ if RENDER_EXTERNAL_HOSTNAME:
     ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
     ALLOWED_HOSTS.append('ai-resume-analyzer-debugger-builder.onrender.com')
 
+# Add localhost for development
+if DEBUG:
+    ALLOWED_HOSTS.extend(['localhost', '127.0.0.1', '0.0.0.0'])
+
 # -----------------------------------
 # 🔹 Installed Apps
 # -----------------------------------
@@ -124,10 +128,21 @@ else:
 # 🔹 Password Validation
 # -----------------------------------
 AUTH_PASSWORD_VALIDATORS = [
-    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
-    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 8,
+        }
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
 ]
 
 # -----------------------------------
@@ -162,34 +177,40 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # -----------------------------------
-# 🔹 Email Configuration (SendGrid)
+# 🔹 Simplified Email Configuration
 # -----------------------------------
-if 'RENDER' in os.environ:
-    # Production - SendGrid
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'  # Default to console
+DEFAULT_FROM_EMAIL = 'ARDAA AI <noreply@ardaa.ai>'
+
+# Production Email Settings (Optional - only if you want welcome emails)
+if 'RENDER' in os.environ and os.environ.get('SENDGRID_API_KEY'):
+    # Production - SendGrid (Optional)
     EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
     EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
     EMAIL_HOST_USER = 'apikey'
     EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
-    DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
-    SERVER_EMAIL = 'ARDAA <noreply@ardaa.com>'
-else:
-    # Development - Console
+elif 'RENDER' in os.environ:
+    # Production but no SendGrid - use console as fallback
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-    DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
+    print("SENDGRID_API_KEY not set - welcome emails will be logged to console")
 
 # -----------------------------------
 # 🔹 Session & CSRF Security
 # -----------------------------------
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_NAME = 'ardaa_session'
+SESSION_COOKIE_AGE = 1209600  # 2 weeks in seconds
 
 # Security settings for production
 if 'RENDER' in os.environ:
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     SECURE_SSL_REDIRECT = True
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 else:
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
@@ -215,18 +236,20 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 # 🔹 Production Specific Settings
 # -----------------------------------
 if 'RENDER' in os.environ:
-    # Security settings
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-    
     # Logging
     LOGGING = {
         'version': 1,
         'disable_existing_loggers': False,
+        'formatters': {
+            'verbose': {
+                'format': '{levelname} {asctime} {module} {message}',
+                'style': '{',
+            },
+        },
         'handlers': {
             'console': {
                 'class': 'logging.StreamHandler',
+                'formatter': 'verbose',
             },
         },
         'root': {
@@ -239,5 +262,29 @@ if 'RENDER' in os.environ:
                 'level': 'INFO',
                 'propagate': False,
             },
+            'accounts': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
         },
     }
+
+# -----------------------------------
+# 🔹 Application Specific Settings
+# -----------------------------------
+# ARDAA AI Specific Settings
+ARDAA_SETTINGS = {
+    'FREE_RESUME_ANALYSIS_LIMIT': 100,
+    'DEFAULT_TOKENS': 100,
+    'MAX_FILE_SIZE_MB': 10,
+    'SUPPORTED_FILE_TYPES': ['.pdf', '.doc', '.docx', '.txt'],
+}
+
+# -----------------------------------
+# 🔹 Security Headers (Production)
+# -----------------------------------
+if 'RENDER' in os.environ:
+    SECURE_HSTS_SECONDS = 31536000  # 1 year
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
