@@ -380,6 +380,58 @@
             text-align: right;
         }
 
+        /* OTP Section */
+        .otp-section {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(0, 217, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid var(--glass-border);
+            animation: slideDown 0.3s ease;
+        }
+
+        .otp-input-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .otp-input {
+            width: 50px;
+            height: 60px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            background: var(--glass);
+            border: 2px solid var(--glass-border);
+            border-radius: 8px;
+            color: var(--text);
+            transition: all 0.3s ease;
+        }
+
+        .otp-input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.2);
+            outline: none;
+        }
+
+        .otp-timer {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+        }
+
+        .otp-timer.expiring {
+            color: var(--warning);
+        }
+
+        .otp-timer.expired {
+            color: var(--error);
+        }
+
         /* Buttons */
         .btn {
             padding: 16px 32px;
@@ -446,6 +498,16 @@
             border-color: var(--glass-border);
         }
 
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #00cc6a);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 255, 136, 0.4);
+        }
+
         /* Form Actions */
         .form-actions {
             display: flex;
@@ -497,6 +559,12 @@
             border-color: rgba(255, 165, 2, 0.3);
         }
 
+        .alert-info {
+            background: rgba(0, 217, 255, 0.1);
+            color: var(--accent);
+            border-color: rgba(0, 217, 255, 0.3);
+        }
+
         /* Login Link */
         .login-link {
             text-align: center;
@@ -535,6 +603,16 @@
             .form-actions {
                 flex-direction: column;
             }
+
+            .otp-input-group {
+                gap: 8px;
+            }
+
+            .otp-input {
+                width: 45px;
+                height: 55px;
+                font-size: 20px;
+            }
         }
 
         /* Loading Animation */
@@ -550,6 +628,17 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
+        }
+
+        /* Disabled state */
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none !important;
+        }
+
+        .btn:disabled:hover::before {
+            left: -100%;
         }
     </style>
 </head>
@@ -614,65 +703,105 @@
             <form id="register-form" method="post" action="{% url 'accounts:register' %}">
                 {% csrf_token %}
                 
-                <div class="form-group">
-                    <label class="form-label">Full Name</label>
-                    <div class="input-container">
-                        <input type="text" name="name" id="id_name" class="form-input" placeholder="Enter your full name" required>
-                        <i class="fas fa-user input-icon"></i>
+                <!-- Basic Information Section -->
+                <div id="basic-info-section">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <div class="input-container">
+                            <input type="text" name="name" id="id_name" class="form-input" placeholder="Enter your full name" required>
+                            <i class="fas fa-user input-icon"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Email Address</label>
-                    <div class="input-container">
-                        <input type="email" name="email" id="id_email" class="form-input" placeholder="Enter your email" required>
-                        <i class="fas fa-envelope input-icon"></i>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <div class="input-container">
+                            <input type="email" name="email" id="id_email" class="form-input" placeholder="Enter your email" required>
+                            <i class="fas fa-envelope input-icon"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Phone Number (Optional)</label>
-                    <div class="input-container">
-                        <input type="tel" name="phone" id="id_phone" class="form-input" placeholder="Enter your phone number">
-                        <i class="fas fa-phone input-icon"></i>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number (Optional)</label>
+                        <div class="input-container">
+                            <input type="tel" name="phone" id="id_phone" class="form-input" placeholder="Enter your phone number">
+                            <i class="fas fa-phone input-icon"></i>
+                        </div>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Password</label>
-                    <div class="input-container">
-                        <input type="password" name="password" id="id_password" class="form-input" placeholder="Create a strong password" required>
-                        <i class="fas fa-lock input-icon"></i>
-                        <button type="button" class="password-toggle" id="toggle-password">
-                            <i class="fas fa-eye"></i>
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="input-container">
+                            <input type="password" name="password" id="id_password" class="form-input" placeholder="Create a strong password" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <button type="button" class="password-toggle" id="toggle-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="password-strength">
+                            <div class="strength-fill" id="strength-fill"></div>
+                        </div>
+                        <div class="strength-text" id="strength-text">Password strength</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password</label>
+                        <div class="input-container">
+                            <input type="password" name="confirm_password" id="id_confirm_password" class="form-input" placeholder="Confirm your password" required>
+                            <i class="fas fa-lock input-icon"></i>
+                            <button type="button" class="password-toggle" id="toggle-confirm-password">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <a href="{% url 'ARDAA:index' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back Home
+                        </a>
+                        <button type="button" id="send-otp-btn" class="btn btn-primary">
+                            <i class="fas fa-paper-plane"></i>
+                            Send OTP
                         </button>
                     </div>
-                    <div class="password-strength">
-                        <div class="strength-fill" id="strength-fill"></div>
-                    </div>
-                    <div class="strength-text" id="strength-text">Password strength</div>
                 </div>
 
-                <div class="form-group">
-                    <label class="form-label">Confirm Password</label>
-                    <div class="input-container">
-                        <input type="password" name="confirm_password" id="id_confirm_password" class="form-input" placeholder="Confirm your password" required>
-                        <i class="fas fa-lock input-icon"></i>
-                        <button type="button" class="password-toggle" id="toggle-confirm-password">
-                            <i class="fas fa-eye"></i>
+                <!-- OTP Verification Section -->
+                <div id="otp-section" class="otp-section">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i>
+                        We've sent a 6-digit verification code to your email. Please enter it below.
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Verification Code</label>
+                        <div class="otp-input-group">
+                            <input type="text" maxlength="1" class="otp-input" data-index="1" autocomplete="off">
+                            <input type="text" maxlength="1" class="otp-input" data-index="2" autocomplete="off">
+                            <input type="text" maxlength="1" class="otp-input" data-index="3" autocomplete="off">
+                            <input type="text" maxlength="1" class="otp-input" data-index="4" autocomplete="off">
+                            <input type="text" maxlength="1" class="otp-input" data-index="5" autocomplete="off">
+                            <input type="text" maxlength="1" class="otp-input" data-index="6" autocomplete="off">
+                        </div>
+                        <input type="hidden" name="otp" id="id_otp">
+                        <div class="otp-timer" id="otp-timer">02:00</div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="button" id="back-to-info-btn" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i>
+                            Back
+                        </button>
+                        <button type="button" id="resend-otp-btn" class="btn btn-ghost" disabled>
+                            <i class="fas fa-redo"></i>
+                            Resend OTP
+                        </button>
+                        <button type="submit" id="verify-otp-btn" class="btn btn-success">
+                            <i class="fas fa-check"></i>
+                            Verify & Create Account
                         </button>
                     </div>
-                </div>
-
-                <div class="form-actions">
-                    <a href="{% url 'ARDAA:index' %}" class="btn btn-secondary">
-                        <i class="fas fa-arrow-left"></i>
-                        Back Home
-                    </a>
-                    <button type="submit" id="register-btn" class="btn btn-primary">
-                        <span id="register-btn-text">Create Account</span>
-                        <span id="register-btn-spinner" class="spinner" style="display: none;"></span>
-                    </button>
                 </div>
             </form>
 
@@ -746,19 +875,194 @@
             });
         }
 
-        // Form validation
+        // OTP Input Handling
+        function setupOTPInput() {
+            const otpInputs = document.querySelectorAll('.otp-input');
+            const hiddenOtpInput = document.getElementById('id_otp');
+            
+            otpInputs.forEach((input, index) => {
+                input.addEventListener('input', (e) => {
+                    const value = e.target.value;
+                    
+                    // Auto-focus next input
+                    if (value && index < otpInputs.length - 1) {
+                        otpInputs[index + 1].focus();
+                    }
+                    
+                    // Update hidden input
+                    updateHiddenOTP();
+                });
+                
+                input.addEventListener('keydown', (e) => {
+                    if (e.key === 'Backspace' && !e.target.value && index > 0) {
+                        otpInputs[index - 1].focus();
+                    }
+                });
+                
+                input.addEventListener('paste', (e) => {
+                    e.preventDefault();
+                    const pasteData = e.clipboardData.getData('text').slice(0, 6);
+                    pasteData.split('').forEach((char, i) => {
+                        if (otpInputs[i]) {
+                            otpInputs[i].value = char;
+                        }
+                    });
+                    updateHiddenOTP();
+                    otpInputs[Math.min(pasteData.length, 5)].focus();
+                });
+            });
+            
+            function updateHiddenOTP() {
+                const otp = Array.from(otpInputs).map(input => input.value).join('');
+                hiddenOtpInput.value = otp;
+            }
+        }
+
+        // OTP Timer
+        function startOTPTimer() {
+            const timerElement = document.getElementById('otp-timer');
+            const resendButton = document.getElementById('resend-otp-btn');
+            let timeLeft = 120; // 2 minutes
+            
+            const timer = setInterval(() => {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                
+                if (timeLeft <= 30) {
+                    timerElement.classList.add('expiring');
+                }
+                
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    timerElement.textContent = 'OTP Expired';
+                    timerElement.classList.remove('expiring');
+                    timerElement.classList.add('expired');
+                    resendButton.disabled = false;
+                    resendButton.innerHTML = '<i class="fas fa-redo"></i> Resend OTP';
+                }
+                
+                timeLeft--;
+            }, 1000);
+            
+            return timer;
+        }
+
+        // Form validation and OTP flow
         function setupFormValidation() {
-            const form = document.getElementById('register-form');
+            const basicInfoSection = document.getElementById('basic-info-section');
+            const otpSection = document.getElementById('otp-section');
+            const sendOtpBtn = document.getElementById('send-otp-btn');
+            const backToInfoBtn = document.getElementById('back-to-info-btn');
+            const resendOtpBtn = document.getElementById('resend-otp-btn');
+            const verifyOtpBtn = document.getElementById('verify-otp-btn');
             const passwordInput = document.getElementById('id_password');
             const confirmInput = document.getElementById('id_confirm_password');
-            const registerBtn = document.getElementById('register-btn');
-            const registerBtnText = document.getElementById('register-btn-text');
-            const registerBtnSpinner = document.getElementById('register-btn-spinner');
+            const emailInput = document.getElementById('id_email');
             
+            let otpTimer = null;
+            
+            // Validate form before sending OTP
+            sendOtpBtn.addEventListener('click', async function() {
+                // Basic validation
+                if (passwordInput.value !== confirmInput.value) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                if (passwordInput.value.length < 8) {
+                    alert('Password must be at least 8 characters long!');
+                    return;
+                }
+                
+                // Show loading state
+                sendOtpBtn.disabled = true;
+                sendOtpBtn.innerHTML = '<span class="spinner"></span> Sending OTP...';
+                
+                try {
+                    // Send OTP request
+                    const response = await fetch('{% url "accounts:send_otp_ajax" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: `email=${encodeURIComponent(emailInput.value)}`
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        // Show OTP section
+                        basicInfoSection.style.display = 'none';
+                        otpSection.style.display = 'block';
+                        
+                        // Start OTP timer
+                        if (otpTimer) clearInterval(otpTimer);
+                        otpTimer = startOTPTimer();
+                        
+                        // Focus first OTP input
+                        document.querySelector('.otp-input').focus();
+                    } else {
+                        alert('Failed to send OTP: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Error sending OTP. Please try again.');
+                    console.error('OTP send error:', error);
+                } finally {
+                    sendOtpBtn.disabled = false;
+                    sendOtpBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Send OTP';
+                }
+            });
+            
+            // Back to basic info
+            backToInfoBtn.addEventListener('click', function() {
+                otpSection.style.display = 'none';
+                basicInfoSection.style.display = 'block';
+                if (otpTimer) clearInterval(otpTimer);
+            });
+            
+            // Resend OTP
+            resendOtpBtn.addEventListener('click', async function() {
+                resendOtpBtn.disabled = true;
+                resendOtpBtn.innerHTML = '<span class="spinner"></span> Resending...';
+                
+                try {
+                    const response = await fetch('{% url "accounts:send_otp_ajax" %}', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/x-www-form-urlencoded',
+                            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                        },
+                        body: `email=${encodeURIComponent(emailInput.value)}`
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.status === 'success') {
+                        // Reset timer
+                        if (otpTimer) clearInterval(otpTimer);
+                        otpTimer = startOTPTimer();
+                        
+                        // Clear OTP inputs
+                        document.querySelectorAll('.otp-input').forEach(input => input.value = '');
+                        document.getElementById('id_otp').value = '';
+                        
+                        alert('New OTP sent to your email!');
+                    } else {
+                        alert('Failed to resend OTP: ' + result.message);
+                    }
+                } catch (error) {
+                    alert('Error resending OTP. Please try again.');
+                } finally {
+                    resendOtpBtn.disabled = true; // Will be enabled by timer
+                }
+            });
+            
+            // Password validation
             passwordInput.addEventListener('input', function() {
                 checkPasswordStrength(this.value);
                 
-                // Validate password match
                 if (confirmInput.value && this.value !== confirmInput.value) {
                     confirmInput.style.borderColor = 'var(--error)';
                 } else {
@@ -773,32 +1077,21 @@
                     this.style.borderColor = '';
                 }
             });
-            
-            form.addEventListener('submit', function(e) {
-                // Basic validation
-                if (passwordInput.value !== confirmInput.value) {
-                    e.preventDefault();
-                    alert('Passwords do not match!');
-                    return;
-                }
-                
-                // Show loading state
-                registerBtn.disabled = true;
-                registerBtnText.style.display = 'none';
-                registerBtnSpinner.style.display = 'inline-block';
-            });
         }
 
         // Initialize everything when page loads
         document.addEventListener('DOMContentLoaded', function() {
             createParticles();
             setupPasswordToggle();
+            setupOTPInput();
             setupFormValidation();
             
             // Add hover effects to all buttons
             document.querySelectorAll('.btn').forEach(btn => {
                 btn.addEventListener('mouseenter', function() {
-                    this.style.transform = 'translateY(-2px)';
+                    if (!this.disabled) {
+                        this.style.transform = 'translateY(-2px)';
+                    }
                 });
                 
                 btn.addEventListener('mouseleave', function() {
