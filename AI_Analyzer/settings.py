@@ -18,7 +18,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-secret-key-for-development-only')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = ['ai-resume-analyzer-debugger-builder.onrender.com', 'localhost', '127.0.0.1']
+# Allowed Hosts
+ALLOWED_HOSTS = []
+RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
+if RENDER_EXTERNAL_HOSTNAME:
+    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
+    ALLOWED_HOSTS.append('ai-resume-analyzer-debugger-builder.onrender.com')
 
 # -----------------------------------
 # 🔹 Installed Apps
@@ -165,12 +170,12 @@ if 'RENDER' in os.environ:
     EMAIL_HOST = 'smtp.sendgrid.net'
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-    EMAIL_HOST_USER = 'apikey'  # ← Literally 'apikey'
-    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')  # ← Your SendGrid API Key
+    EMAIL_HOST_USER = 'apikey'
+    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')
     DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
     SERVER_EMAIL = 'ARDAA <noreply@ardaa.com>'
 else:
-    # Development - Console (emails print to terminal)
+    # Development - Console
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
     DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
 
