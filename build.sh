@@ -2,6 +2,7 @@
 # build.sh
 
 # Install all required packages
+pip install --upgrade pip
 pip install -r requirements.txt
 
 # Collect all static files (CSS, JS, images)
