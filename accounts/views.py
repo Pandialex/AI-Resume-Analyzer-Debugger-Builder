@@ -5,9 +5,11 @@ from django.utils import timezone
 from django.http import JsonResponse, HttpResponseBadRequest
 from django.contrib import messages
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse as JsonResp
 
 from .forms import UserRegisterForm, UserLoginForm, ForgetPasswordForm, ResetPasswordForm
-from .utils import generate_otp, send_otp_via_email, otp_is_valid
+from .utils import generate_otp, send_otp_via_email, otp_is_valid, send_welcome_email
 from .models import UsageTracker
 
 User = get_user_model()
@@ -46,7 +48,7 @@ def send_otp_ajax(request):
         return JsonResponse({"status": "error", "message": f"Failed to generate/send OTP: {e}"}, status=500)
 
 
-# ---------------- Register ----------------
+# ---------------- Register (with auto-login and welcome email) ----------------
 def register(request):
     if request.method == "POST":
         form = UserRegisterForm(request.POST)
@@ -84,11 +86,21 @@ def register(request):
 
         UsageTracker.objects.create(user=user, tokens_used=5)
 
+        # ✅ SEND WELCOME EMAIL
+        try:
+            send_welcome_email(user)
+            messages.success(request, f"Welcome to ARDAA, {user.name}! Check your email for welcome message. 🎉")
+        except Exception as e:
+            print(f"Welcome email failed: {e}")
+            messages.success(request, f"Welcome to ARDAA, {user.name}! 🎉")
+
+        # ✅ AUTO-LOGIN USER
+        login(request, user)
+
         for k in ['otp_value', 'otp_created_at', 'otp_for_email']:
             request.session.pop(k, None)
 
-        messages.success(request, "Account created! Please log in.")
-        return redirect("accounts:login")
+        return redirect("ARDAA:index")  # Redirect to home page
 
     form = UserRegisterForm()
     return render(request, "accounts/register.html", {"form": form})
@@ -188,8 +200,6 @@ def forget_password_verify(request, user_id):
 
 
 # ---------------- Profile ----------------
-from django.contrib.auth.decorators import login_required
-
 @login_required
 def profile_view(request):
     user = request.user
@@ -202,8 +212,6 @@ def profile_view(request):
 
 
 # ---------------- Check resume access ----------------
-from django.http import JsonResponse as JsonResp
-
 def check_resume_access(request):
     if request.user.is_authenticated:
         tracker, created = UsageTracker.objects.get_or_create(user=request.user)
