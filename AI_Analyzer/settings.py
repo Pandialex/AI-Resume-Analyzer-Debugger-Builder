@@ -15,16 +15,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # -----------------------------------
 # 🔹 Security
 # -----------------------------------
-# In settings.py
-SECRET_KEY = os.environ.get('SECRET_KEY', 'fallback-key')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-fallback-secret-key-for-development-only')
 DEBUG = os.environ.get('DEBUG', 'False').lower() == 'true'
-ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
-GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
-RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
-if RENDER_EXTERNAL_HOSTNAME:
-    ALLOWED_HOSTS.append(RENDER_EXTERNAL_HOSTNAME)
-    ALLOWED_HOSTS.append('ai-resume-analyzer-debugger-builder.onrender.com')
+ALLOWED_HOSTS = ['ai-resume-analyzer-debugger-builder.onrender.com', 'localhost', '127.0.0.1']
 
 # -----------------------------------
 # 🔹 Installed Apps
@@ -43,15 +37,7 @@ INSTALLED_APPS = [
     'resumebuild',
     'accounts',
     'chat',
-
-    # Authentication via Allauth
-    'django.contrib.sites',
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
 ]
-
-SITE_ID = 1
 
 # -----------------------------------
 # 🔹 Authentication
@@ -60,22 +46,11 @@ AUTH_USER_MODEL = 'accounts.User'
 
 AUTHENTICATION_BACKENDS = [
     'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
 LOGIN_REDIRECT_URL = 'ARDAA:index'
-LOGOUT_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = 'ARDAA:index'
 LOGIN_URL = 'accounts:login'
-
-# -----------------------------------
-# 🔹 Allauth Settings - NO OTP REQUIRED
-# -----------------------------------
-ACCOUNT_EMAIL_VERIFICATION = 'none'  # ✅ NO EMAIL VERIFICATION
-ACCOUNT_EMAIL_REQUIRED = False  # ✅ EMAIL NOT REQUIRED
-ACCOUNT_AUTHENTICATION_METHOD = 'username'  # ✅ USERNAME ONLY
-ACCOUNT_LOGIN_METHODS = ['username']  # ✅ SIMPLE LOGIN
-ACCOUNT_USERNAME_REQUIRED = True
-ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
 
 # -----------------------------------
 # 🔹 Middleware
@@ -87,7 +62,6 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'allauth.account.middleware.AccountMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -180,12 +154,13 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # -----------------------------------
 # 🔹 Gemini API
 # -----------------------------------
-# GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
+GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # -----------------------------------
-# 🔹 Email Configuration - NO EMAIL SENDING
+# 🔹 Email Configuration
 # -----------------------------------
-EMAIL_BACKEND = 'django.core.mail.backends.dummy.EmailBackend'  # ✅ NO NETWORK CALLS
+# Use console email backend to avoid errors
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
 # -----------------------------------
 # 🔹 Session & CSRF Security
@@ -218,28 +193,3 @@ CSRF_TRUSTED_ORIGINS = [
 # -----------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
-
-# -----------------------------------
-# 🔹 Production Specific Settings
-# -----------------------------------
-if 'RENDER' in os.environ:
-    # Security settings
-    SECURE_BROWSER_XSS_FILTER = True
-    SECURE_CONTENT_TYPE_NOSNIFF = True
-    X_FRAME_OPTIONS = 'DENY'
-    
-    # Logging
-    LOGGING = {
-        'version': 1,
-        'disable_existing_loggers': False,
-        'handlers': {
-            'console': {
-                'class': 'logging.StreamHandler',
-            },
-        },
-        'root': {
-            'handlers': ['console'],
-            'level': 'WARNING',
-        },
-    }
-
