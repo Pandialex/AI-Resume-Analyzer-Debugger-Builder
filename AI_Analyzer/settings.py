@@ -157,10 +157,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY', '')
 
 # -----------------------------------
-# 🔹 Email Configuration
+# 🔹 Email Configuration (SendGrid)
 # -----------------------------------
-# Use console email backend to avoid errors
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+if 'RENDER' in os.environ:
+    # Production - SendGrid
+    EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+    EMAIL_HOST = 'smtp.sendgrid.net'
+    EMAIL_PORT = 587
+    EMAIL_USE_TLS = True
+    EMAIL_HOST_USER = 'apikey'  # ← Literally 'apikey'
+    EMAIL_HOST_PASSWORD = os.environ.get('SENDGRID_API_KEY', '')  # ← Your SendGrid API Key
+    DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
+    SERVER_EMAIL = 'ARDAA <noreply@ardaa.com>'
+else:
+    # Development - Console (emails print to terminal)
+    EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+    DEFAULT_FROM_EMAIL = 'ARDAA <noreply@ardaa.com>'
 
 # -----------------------------------
 # 🔹 Session & CSRF Security
@@ -193,3 +205,34 @@ CSRF_TRUSTED_ORIGINS = [
 # -----------------------------------
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10MB
+
+# -----------------------------------
+# 🔹 Production Specific Settings
+# -----------------------------------
+if 'RENDER' in os.environ:
+    # Security settings
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
+    
+    # Logging
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'console': {
+                'class': 'logging.StreamHandler',
+            },
+        },
+        'root': {
+            'handlers': ['console'],
+            'level': 'INFO',
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['console'],
+                'level': 'INFO',
+                'propagate': False,
+            },
+        },
+    }
