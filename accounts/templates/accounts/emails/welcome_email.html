@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        body { 
+            font-family: 'Arial', sans-serif; 
+            line-height: 1.6; 
+            color: #333; 
+            margin: 0; 
+            padding: 0; 
+            background: #f4f4f4;
+        }
+        .container { 
+            max-width: 600px; 
+            margin: 0 auto; 
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+        }
+        .header { 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            color: white; 
+            padding: 40px 20px; 
+            text-align: center; 
+        }
+        .content { 
+            padding: 30px; 
+        }
+        .button { 
+            background: #667eea; 
+            color: white; 
+            padding: 12px 30px; 
+            text-decoration: none; 
+            border-radius: 5px; 
+            display: inline-block; 
+            margin: 20px 0; 
+            font-weight: bold;
+        }
+        .feature { 
+            background: #f8f9fa; 
+            padding: 15px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+            border-left: 4px solid #667eea; 
+        }
+        .footer { 
+            background: #f8f9fa; 
+            padding: 20px; 
+            text-align: center; 
+            color: #666; 
+            font-size: 14px;
+            border-top: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 style="margin: 0; font-size: 28px;">🎉 Welcome to ARDAA!</h1>
+            <p style="margin: 10px 0 0 0; font-size: 16px; opacity: 0.9;">Your AI-Powered Resume Analyzer</p>
+        </div>
+        
+        <div class="content">
+            <p>Hello <strong style="color: #667eea;">{{ user.name }}</strong>,</p>
+            
+            <p>Thank you for joining ARDAA! We're excited to help you optimize your resume and career journey.</p>
+            
+            <h3 style="color: #333; margin-top: 30px;">🚀 Get Started Today:</h3>
+            
+            <div class="feature">
+                <strong>📊 Resume Analysis</strong><br>
+                Upload your resume and get instant AI-powered feedback
+            </div>
+            
+            <div class="feature">
+                <strong>🎯 ATS Compatibility</strong><br>
+                Check how well your resume passes through Applicant Tracking Systems
+            </div>
+            
+            <div class="feature">
+                <strong>💡 Smart Suggestions</strong><br>
+                Get personalized tips to improve your resume
+            </div>
+            
+            <div class="feature">
+                <strong>🤖 AI Assistant</strong><br>
+                Chat with ARDAA AI for career advice anytime
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://ai-resume-analyzer-debugger-builder.onrender.com/" class="button">
+                    Start Analyzing Your Resume ›
+                </a>
+            </div>
+            
+            <p style="text-align: center; color: #666; font-style: italic;">
+                We're here to help you land your dream job! 💼
+            </p>
+        </div>
+        
+        <div class="footer">
+            <p style="margin: 0 0 10px 0;"><strong>ARDAA - AI Resume Debugger & Analyzer</strong></p>
+            <p style="margin: 5px 0; font-size: 12px;">Need help? Contact us at support@ardaa.com</p>
+            <p style="margin: 5px 0; font-size: 12px;">© 2024 ARDAA. All rights reserved.</p>
+        </div>
+    </div>
+</body>
+</html>
