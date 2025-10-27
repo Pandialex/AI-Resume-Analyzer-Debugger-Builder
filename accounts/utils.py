@@ -3,6 +3,53 @@ from django.core.mail import EmailMultiAlternatives
 from django.conf import settings
 from django.utils import timezone
 from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+
+def send_welcome_email(user):
+    """
+    Send welcome email to new user
+    """
+    subject = '🎉 Welcome to ARDAA - AI Resume Analyzer'
+    
+    # HTML content
+    html_content = render_to_string('emails/welcome_email.html', {
+        'user': user,
+    })
+    
+    # Plain text content (fallback)
+    text_content = f"""
+    Welcome to ARDAA, {user.name}!
+
+    Thank you for joining ARDAA - Your AI-powered Resume Analyzer!
+
+    🚀 What you can do:
+    - Analyze resumes with AI
+    - Get ATS compatibility scores  
+    - Receive improvement suggestions
+    - Chat with ARDAA AI Assistant
+
+    Get started: https://ai-resume-analyzer-debugger-builder.onrender.com/
+
+    Best regards,
+    The ARDAA Team
+    """
+    
+    try:
+        email = EmailMultiAlternatives(
+            subject=subject,
+            body=text_content,
+            from_email='ARDAA <noreply@ardaa.com>',
+            to=[user.email]
+        )
+        email.attach_alternative(html_content, "text/html")
+        email.send()
+        print(f"✅ Welcome email sent to {user.email}")
+        return True
+    except Exception as e:
+        print(f"❌ Email sending failed: {e}")
+        return False
 
 
 def generate_otp():
@@ -61,4 +108,5 @@ def otp_is_valid(otp_input, stored_otp, otp_created_at, validity_minutes=2):
     now = timezone.now()
     if now > otp_created_at + timezone.timedelta(minutes=validity_minutes):
         return False
+
     return True
